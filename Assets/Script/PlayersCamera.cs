@@ -13,7 +13,7 @@ public class PlayersCamera : MonoBehaviour
     {
         moveVec = Target.position + startDistance;
 
-        moveVec.z = 0;
+        moveVec.x = 0;
         moveVec.y = startDistance.y;
 
         transform.position = moveVec;

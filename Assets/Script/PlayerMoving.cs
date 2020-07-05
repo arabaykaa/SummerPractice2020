@@ -6,7 +6,7 @@ public class PlayerMoving : MonoBehaviour
     Vector3 moveVec, gravity;
     float speed = 5f, jumpSpeed = 13;
     int laneNumber = 1, 
-        laneCount = 2;
+        laneCount = 5;
 
     public float FirstLanePos, LaneDistance, SideSpeed;
     bool didChangeLastFrame = false;
@@ -18,7 +18,7 @@ public class PlayerMoving : MonoBehaviour
         gravity = Vector3.zero;
     }
 
-    void Update()
+    private void Update()
     {
         if (controller.isGrounded)
         {
@@ -29,8 +29,10 @@ public class PlayerMoving : MonoBehaviour
             }
         }
         else gravity += Physics.gravity * Time.deltaTime * 3;
-
-        moveVec.x = speed;
+    }
+    void FixedUpdate()
+    {
+        moveVec.z = speed;
         moveVec += gravity;
         moveVec *= Time.deltaTime;
 
@@ -40,15 +42,21 @@ public class PlayerMoving : MonoBehaviour
             if (!didChangeLastFrame)
             {
                 didChangeLastFrame = true;
-                laneNumber += (int)Mathf.Sign(input);
-                laneNumber = Mathf.Clamp(laneNumber, 0, laneCount);
+                if (laneNumber > 1 && laneNumber < 2)
+                {
+                    laneNumber += (int)Mathf.Sign(input);
+                    laneNumber = Mathf.Clamp(laneNumber, -3, laneCount);
+                } else if (laneNumber < 1)
+                {
+                    laneNumber += (int)Mathf.Sign(input);
+                    laneNumber = Mathf.Clamp(laneNumber, -3, laneCount);
+                }
             }
         }
         else didChangeLastFrame = false;
 
-        controller.Move(moveVec);
         Vector3 newPos = transform.position;
-        newPos.z = Mathf.Lerp(newPos.z, FirstLanePos + (laneNumber * LaneDistance), Time.deltaTime * SideSpeed);
+        newPos.x = Mathf.Lerp(newPos.x, FirstLanePos + (laneNumber * LaneDistance), Time.deltaTime * SideSpeed);
         transform.position = newPos;
     }
 }
